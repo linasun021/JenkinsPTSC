@@ -1,6 +1,8 @@
 pipeline {
   agent any
-
+  environment {
+    WEBHOOK_URL = 'https://webhook.site/82d220fb-d957-424e-9808-f9e8f60cd12b' // replace with your mock or actual Teams webhook
+  }
   stages {
     stage('Clone Repository') {
       steps {
@@ -37,6 +39,22 @@ pipeline {
     always {
       // Optional: requires Allure plugin installed
       allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+    }
+    
+    success {
+      bat """
+        curl -H "Content-Type: application/json" ^
+             -d "{ \\"@type\\": \\"MessageCard\\", \\"@context\\": \\"http://schema.org/extensions\\", \\"summary\\": \\"✅ Build Passed\\", \\"themeColor\\": \\"00FF00\\", \\"title\\": \\"✅ Jenkins Build Passed\\", \\"text\\": \\"Build #${env.BUILD_NUMBER} of ${env.JOB_NAME} succeeded.\\" }" ^
+             "%WEBHOOK_URL%"
+      """
+    }
+
+    failure {
+      bat """
+        curl -H "Content-Type: application/json" ^
+             -d "{ \\"@type\\": \\"MessageCard\\", \\"@context\\": \\"http://schema.org/extensions\\", \\"summary\\": \\"❌ Build Failed\\", \\"themeColor\\": \\"FF0000\\", \\"title\\": \\"❌ Jenkins Build Failed\\", \\"text\\": \\"Build #${env.BUILD_NUMBER} of ${env.JOB_NAME} failed.\\" }" ^
+             "%WEBHOOK_URL%"
+      """
     }
   }
 }
