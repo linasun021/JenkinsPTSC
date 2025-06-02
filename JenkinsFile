@@ -38,23 +38,39 @@ pipeline {
   post {
     always {
       // Optional: requires Allure plugin installed
-      allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+      allure includeProperties: false, jdk: '', results: [[path: 'allure-results']],
+      
+      script {
+        def reportUrl = "http://localhost:8080/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/allure" // For mock/test. Replace with real Jenkins-hosted report URL later
+
+        def payload = """{
+          "@type": "MessageCard",
+          "@context": "http://schema.org/extensions",
+          "summary": "Jenkins Build Notification",
+          "themeColor": "${currentBuild.currentResult == 'SUCCESS' ? '00FF00' : 'FF0000'}",
+          "title": "${currentBuild.currentResult == 'SUCCESS' ? '✅ Build Passed' : '❌ Build Failed'}",
+          "text": "Build #${env.BUILD_NUMBER} of *${env.JOB_NAME}* finished with status: **${currentBuild.currentResult}**.\\n[View Allure Report](${reportUrl})"
+        }"""
+
+        // Send to MS Teams via webhook
+        bat "curl -H \"Content-Type: application/json\" -d \"${payload}\" %WEBHOOK_URL%"
+      }
     }
     
-    success {
+/*     success {
       bat """
         curl -H "Content-Type: application/json" ^
              -d "{ \\"@type\\": \\"MessageCard\\", \\"@context\\": \\"http://schema.org/extensions\\", \\"summary\\": \\"✅ Build Passed\\", \\"themeColor\\": \\"00FF00\\", \\"title\\": \\"✅ Jenkins Build Passed\\", \\"text\\": \\"Build #${env.BUILD_NUMBER} of ${env.JOB_NAME} succeeded.\\" }" ^
              "%WEBHOOK_URL%"
       """
-    }
+    } */
 
-    failure {
+/*     failure {
       bat """
         curl -H "Content-Type: application/json" ^
              -d "{ \\"@type\\": \\"MessageCard\\", \\"@context\\": \\"http://schema.org/extensions\\", \\"summary\\": \\"❌ Build Failed\\", \\"themeColor\\": \\"FF0000\\", \\"title\\": \\"❌ Jenkins Build Failed\\", \\"text\\": \\"Build #${env.BUILD_NUMBER} of ${env.JOB_NAME} failed.\\" }" ^
              "%WEBHOOK_URL%"
       """
-    }
+    } */
   }
 }
