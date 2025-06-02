@@ -3,7 +3,13 @@ pipeline {
   environment {
     WEBHOOK_URL = 'https://webhook.site/82d220fb-d957-424e-9808-f9e8f60cd12b' // replace with your mock or actual Teams webhook
   }
+
   stages {
+    stage('Clean Workspace') {
+      steps {
+        deleteDir() // 💣 Deletes all files in the workspace
+      }
+    }
     stage('Clone Repository') {
       steps {
         git(
