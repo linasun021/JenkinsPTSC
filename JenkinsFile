@@ -49,7 +49,7 @@ pipeline {
     success {
       bat """
         curl -H "Content-Type: application/json" ^
-             -d "{ \\"@type\\": \\"MessageCard\\", \\"@context\\": \\"http://schema.org/extensions\\", \\"summary\\": \\"✅ Build Passed\\", \\"themeColor\\": \\"00FF00\\", \\"title\\": \\"✅ Jenkins Build Passed\\", \\"text\\": \\"Build #${env.BUILD_NUMBER} of ${env.JOB_NAME} succeeded.\\" }" ^
+             -d "{ \\"@type\\": \\"MessageCard\\", \\"@context\\": \\"http://schema.org/extensions\\", \\"summary\\": \\"✅ Build Passed\\", \\"themeColor\\": \\"00FF00\\", \\"title\\": \\"✅ Jenkins Build Passed\\", \\"text\\": \\"Build #${env.BUILD_NUMBER} of ${env.JOB_NAME} succeeded.[View Allure Report](http://localhost:8080/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/allure)\\" }" ^
              "%WEBHOOK_URL%"
       """
     }
