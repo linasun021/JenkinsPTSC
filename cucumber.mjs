@@ -5,5 +5,5 @@ export default {
   formatOptions: {
     resultsDir: "allure-results",
   },
-  paths: ["src/tests/gui/features/contactUs.feature"],
+  paths: ["src/tests/**/features/**/*.feature"],
 };

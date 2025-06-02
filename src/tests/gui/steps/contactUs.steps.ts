@@ -67,7 +67,4 @@ When('I click the "Home" button', async function () {
 
 Then("I should be navigated back to the home page successfully", async function () {
   await expect(this.page).toHaveURL(process.env.BASE_URL as string);
-  console.log(`${this.newcheck} show here!`);
-  console.log(`${this.testid} show here!`);
-  console.log(`${this.nothing} show here!`);
 });
