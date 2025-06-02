@@ -37,8 +37,11 @@ pipeline {
 
   post {
     always {
-      // Optional: requires Allure plugin installed
-      allure includeProperties: false, jdk: '', results: [[path: 'allure-results']],
+      allure([
+      includeProperties: false,
+      jdk: '',
+      results: [[path: 'allure-results']]
+    ])
       
       script {
         def reportUrl = "http://localhost:8080/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/allure" // For mock/test. Replace with real Jenkins-hosted report URL later
